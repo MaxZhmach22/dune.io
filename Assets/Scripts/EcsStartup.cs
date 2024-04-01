@@ -1,9 +1,15 @@
 using Dune.IO;
 using Leopotam.EcsLite;
+using Leopotam.EcsLite.Di;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace Client {
     sealed class EcsStartup : MonoBehaviour {
+        
+        
+        
+        
         EcsWorld _world;        
         IEcsSystems _systems;
 
@@ -23,6 +29,7 @@ namespace Client {
                 // .Add (new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem ("events"))
                 .Add (new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem ())
 #endif
+                .Inject()
                 .Init ();
         }
 
