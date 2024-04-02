@@ -1,13 +1,12 @@
 using UnityEngine;
 
-
 namespace Dune.IO
 {
     public struct HarvesterComponent
     {   
-        public Transform HarvesterTransform;
+        public Harvester HarvesterView;
+        public GameObject Target;
         public int HarvesterId;
-        public int HarvesterLevel;
     }
 }
 
