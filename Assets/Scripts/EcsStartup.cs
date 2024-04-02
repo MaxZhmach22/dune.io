@@ -6,18 +6,21 @@ using UnityEngine;
 
 namespace Client {
     sealed class EcsStartup : MonoBehaviour {
-        
-        
-        
+
+        [field: BoxGroup("Configuration")]
+        [field: SerializeField]
+        public Configuration Configuration { get; private set; }
+    
         
         EcsWorld _world;        
         IEcsSystems _systems;
 
         void Start () {
             _world = new EcsWorld ();
-            _systems = new EcsSystems (_world);
+            _systems = new EcsSystems (_world, Configuration);
             _systems
                 .Add(new HarvesterMovingSystem())
+                .Add(new HarvesterOutlineSystem())
                 // register your systems here, for example:
                 // .Add (new TestSystem1 ())
                 // .Add (new TestSystem2 ())
@@ -31,6 +34,9 @@ namespace Client {
 #endif
                 .Inject()
                 .Init ();
+            
+            // Create pointer events subscription
+            var pointerService = new PointerService(_world).Init(this);
         }
 
         void Update () {

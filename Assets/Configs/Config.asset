@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c312c2a3c2154daa8d85fabb411a4c28, type: 3}
+  m_Name: Config
+  m_EditorClassIdentifier: 
+  temp: temp
+  <HarvesterOutlineMaterial>k__BackingField: {fileID: 2100000, guid: a575a193dfdf5ec4e933c34d9f5a20e3, type: 2}

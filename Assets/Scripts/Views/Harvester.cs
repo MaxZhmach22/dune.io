@@ -8,5 +8,8 @@ namespace Dune.IO
     {
         [field: BoxGroup("Settings")] [field: SerializeField] public float Speed { get; private set; }
         [field: BoxGroup("Settings")] [field: SerializeField] public int Level { get; private set; }
+        
+        //Id of the harvester
+        [field: BoxGroup("Settings")] [field: SerializeField] public int HarvesterId { get; set; }
     }
 }

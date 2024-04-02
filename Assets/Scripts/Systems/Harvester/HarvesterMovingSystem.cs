@@ -24,7 +24,7 @@ namespace Dune.IO
             ref var harvesterComponent = ref _harvesterPool.Value.Add(harvester);
             harvesterComponent.HarvesterView = Object.FindObjectOfType<Harvester>();
             harvesterComponent.Target = Object.FindObjectOfType<SpicePoint>().gameObject;
-            harvesterComponent.HarvesterId = harvester;
+            harvesterComponent.HarvesterView.HarvesterId = harvester;
             harvesterComponent.Tween =
                 harvesterComponent.HarvesterView.transform.DOMove(harvesterComponent.Target.transform.position, harvesterComponent.HarvesterView.Speed);
             harvesterComponent.Tween.SetUpdate(UpdateType.Manual);
