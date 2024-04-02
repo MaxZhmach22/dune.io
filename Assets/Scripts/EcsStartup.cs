@@ -17,7 +17,7 @@ namespace Client {
             _world = new EcsWorld ();
             _systems = new EcsSystems (_world);
             _systems
-                .Add(new TestSystem())
+                .Add(new HarvesterMovingSystem())
                 // register your systems here, for example:
                 // .Add (new TestSystem1 ())
                 // .Add (new TestSystem2 ())
