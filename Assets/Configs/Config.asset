@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c312c2a3c2154daa8d85fabb411a4c28, type: 3}
   m_Name: Config
   m_EditorClassIdentifier: 
-  temp: temp
+  <StartScore>k__BackingField: 200
+  <HarvesterPrefab>k__BackingField: {fileID: 1787552319781404947, guid: 96ab2c885ac127b4995804fe5d8b4eb4, type: 3}
   <HarvesterOutlineMaterial>k__BackingField: {fileID: 2100000, guid: a575a193dfdf5ec4e933c34d9f5a20e3, type: 2}
+  <StartHarvesterPrice>k__BackingField: 100

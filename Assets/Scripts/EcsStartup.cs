@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Client {
+namespace Dune.IO {
     sealed class EcsStartup : MonoBehaviour {
         
         [field: BoxGroup("Configuration")]
@@ -26,6 +26,10 @@ namespace Client {
         [field: Foldout("Canvas")]
         [field: SerializeField]
         public Button StartButton { get; private set; }
+        
+        [field: Foldout("Canvas")]
+        [field: SerializeField]
+        public Button BuyHarvesterButton { get; private set; }
         
         [field: Foldout("Canvas")]
         [field: SerializeField]
@@ -60,7 +64,7 @@ namespace Client {
             
             // Create pointer events subscription
             var pointerService = new PointerService(_world).Init(this);
-            var uiService = new UiService(_world, RestartButton, ScoreText, StartButton, StartPanel, Configuration, scoreService)
+            var uiService = new UiService(_world, RestartButton, ScoreText, StartButton, BuyHarvesterButton, StartPanel, Configuration, scoreService)
                 .Init(this);
         }
 

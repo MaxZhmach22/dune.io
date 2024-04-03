@@ -14,6 +14,7 @@ namespace Dune.IO
         private readonly Button _restartButton;
         private readonly TMP_Text _scoreText;
         private readonly Button _starButton;
+        private readonly Button _buyHarvesterButton;
         private readonly GameObject _startPanel;
         
         private readonly Configuration _configuration;
@@ -24,6 +25,7 @@ namespace Dune.IO
             Button restartButton,
             TMP_Text scoreText,
             Button starButton,
+            Button buyHarvesterButton,
             GameObject startPanel,
             Configuration configuration,
             ScoreService scoreService
@@ -33,6 +35,7 @@ namespace Dune.IO
             _restartButton = restartButton;
             _scoreText = scoreText;
             _starButton = starButton;
+            _buyHarvesterButton = buyHarvesterButton;
             _startPanel = startPanel;
             _configuration = configuration;
             _scoreService = scoreService;
@@ -49,6 +52,8 @@ namespace Dune.IO
                 .Subscribe(_ =>
                 {
                     _startPanel.SetActive(false);
+                    ref var harvesterComponent = ref _world.GetPool<BuyHarvesterComponent>().Add(_world.NewEntity());
+                    harvesterComponent.Price = _configuration.StartHarvesterPrice;
                 })
                 .AddTo(monoBehaviour);
             
@@ -58,6 +63,14 @@ namespace Dune.IO
                     _scoreText.text = _scoreService.GetScore().ToString();
                 }) 
                 .Subscribe(score => _scoreText.text = score.ToString())
+                .AddTo(monoBehaviour);
+
+            _buyHarvesterButton.OnClickAsObservable()
+                .Subscribe(_ =>
+                {
+                    ref var harvesterComponent = ref _world.GetPool<BuyHarvesterComponent>().Add(_world.NewEntity());
+                    harvesterComponent.Price = _configuration.StartHarvesterPrice;
+                })
                 .AddTo(monoBehaviour);
             
             return this;

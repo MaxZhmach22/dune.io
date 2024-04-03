@@ -17,7 +17,7 @@ namespace Dune.IO
         public void AddScore(float score)
         {
             _score += score;
-            ScoreSubject.OnNext(score);
+            ScoreSubject.OnNext(_score);
         }
         
         public bool RemoveScore(float score)
@@ -29,7 +29,7 @@ namespace Dune.IO
             else
             {
                 _score -= score;
-                ScoreSubject.OnNext(score);
+                ScoreSubject.OnNext(_score);
                 return true;               
             }
         }
