@@ -53,14 +53,8 @@ namespace Dune.IO
             ref var harvesterComponent = ref _harvesterPool.Value.Add(harvester);
             var harvesterView = Object.Instantiate(configuration.HarvesterPrefab, Vector3.zero, Quaternion.identity,  _harvestersParentObject.transform);
             harvesterComponent.HarvesterView = harvesterView.GetComponent<Harvester>();
-            harvesterComponent.Target = Object.FindObjectOfType<SpicePoint>().gameObject;
             harvesterComponent.HarvesterView.HarvesterId = harvester;
-            harvesterComponent.Tween =
-                harvesterComponent.HarvesterView.transform.DOMove(harvesterComponent.Target.transform.position, harvesterComponent.HarvesterView.Speed);
-            harvesterComponent.Tween.SetUpdate(UpdateType.Manual);
-            harvesterComponent.Tween.SetEase(Ease.InOutSine);
-            harvesterComponent.Tween.SetLoops(loops: -1, loopType: LoopType.Yoyo);
-            harvesterComponent.Tween.OnComplete(() => { Debug.Log("Harvester arrived"); });
+            
             return ref harvesterComponent;
         }
     }

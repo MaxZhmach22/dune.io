@@ -1,4 +1,5 @@
-﻿using Leopotam.EcsLite;
+﻿using DG.Tweening;
+using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using UniRx;
 using UnityEngine;
@@ -31,11 +32,13 @@ namespace Dune.IO
                         {
                             //Add outline component 
                             var pool = _world.GetPool<OutlineComponent>();
-                            var filter = _world.Filter<OutlineComponent>().End();
+                            var harvesterPool = _world.GetPool<HarvesterComponent>();
+                            var filter = _world.Filter<OutlineComponent>().Inc<HarvesterComponent>().End();
                             foreach (var entity in filter)
                             {
                                 ref var entityOutline = ref pool.Get(entity);
-                                harvester.GetComponentInChildren<Renderer>(true).material = entityOutline.DefaultMaterial;
+                                ref var harvesterComponent = ref harvesterPool.Get(entity);
+                                harvesterComponent.HarvesterView.GetComponentInChildren<Renderer>(true).material = entityOutline.DefaultMaterial;
                                 pool.Del(entity);
                             }
                             
@@ -47,6 +50,28 @@ namespace Dune.IO
                             
                             Debug.Log("Harvester clicked");
                         }
+                        else if(hit.transform.TryGetComponent<SpicePoint>(out var spicePoint))
+                        {
+                            var pool = _world.GetPool<OutlineComponent>();
+                            var harvesterPool = _world.GetPool<HarvesterComponent>();
+                            var filter = _world.Filter<OutlineComponent>().Inc<HarvesterComponent>().End();
+
+                            foreach (var entity in filter)
+                            {
+                                ref var entityOutline = ref pool.Get(entity);
+                                ref var harvesterComponent = ref harvesterPool.Get(entity);
+                                harvesterComponent.HarvesterView.GetComponentInChildren<Renderer>(true).material = entityOutline.DefaultMaterial;
+                                harvesterComponent.Target = spicePoint.gameObject;
+                                harvesterComponent.Tween =
+                                    harvesterComponent.HarvesterView.transform.DOMove(harvesterComponent.Target.transform.position, harvesterComponent.HarvesterView.Speed);
+                                harvesterComponent.Tween.SetUpdate(UpdateType.Manual);
+                                harvesterComponent.Tween.SetEase(Ease.InOutSine);
+                                harvesterComponent.Tween.OnComplete(() => { Debug.Log("Harvester arrived"); });
+                                pool.Del(entity);
+                            }
+                            
+                        }
+                        
                         else
                         {
                             var pool = _world.GetPool<OutlineComponent>();
