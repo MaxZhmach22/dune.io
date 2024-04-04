@@ -46,8 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5521d6cf2e944b57b29a9ea3e72c129e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Speed>k__BackingField: 3
-  <Level>k__BackingField: 0
+  <Speed>k__BackingField: 0.2
+  <Level>k__BackingField: 1
+  <SpiceCapacity>k__BackingField: 25
+  <SpiceAmount>k__BackingField: 0
   <HarvesterId>k__BackingField: 0
 --- !u!65 &1652874369752097479
 BoxCollider:

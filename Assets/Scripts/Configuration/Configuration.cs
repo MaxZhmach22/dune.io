@@ -22,5 +22,9 @@ namespace Dune.IO
         [field: BoxGroup("Harvester settings")]
         [field: SerializeField]
         public float StartHarvesterPrice { get; private set; } = 100;
+        
+        [field: BoxGroup("Harvester settings")]
+        [field: SerializeField]
+        public float StartMiningSpeed { get; private set; } = 2;
     }
 }

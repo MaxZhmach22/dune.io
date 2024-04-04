@@ -16,3 +16,4 @@ MonoBehaviour:
   <HarvesterPrefab>k__BackingField: {fileID: 1787552319781404947, guid: 96ab2c885ac127b4995804fe5d8b4eb4, type: 3}
   <HarvesterOutlineMaterial>k__BackingField: {fileID: 2100000, guid: a575a193dfdf5ec4e933c34d9f5a20e3, type: 2}
   <StartHarvesterPrice>k__BackingField: 100
+  <StartMiningSpeed>k__BackingField: 5
