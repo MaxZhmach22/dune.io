@@ -9,6 +9,7 @@ namespace Dune.IO
     {
         private readonly EcsPoolInject<MiningComponent> _miningPool = default;
         private readonly EcsPoolInject<HarvesterComponent> _harvesterComponent = default;
+        private readonly EcsPoolInject<FactoryComponent> _factoryPool = default;
         private readonly EcsFilterInject<Inc<MiningComponent, HarvesterComponent>> _filter = default;
         private readonly EcsSharedInject<Configuration> _configuration = default;
 
@@ -37,7 +38,9 @@ namespace Dune.IO
                     harvesterComponent.Tween.SetEase(Ease.InOutSine);
                     harvesterComponent.Tween.OnComplete(() =>
                     {
-                        //miningPool.Add(entity);
+                        ref var harvesterComponent = ref _harvesterComponent.Value.Get(entity);
+                        ref var  factoryComponent = ref _factoryPool.Value.Add(harvesterComponent.HarvesterView.HarvesterId);
+                        factoryComponent.FactoryView = harvesterComponent.Target.GetComponent<Factory>();
                         Debug.Log("Harvester arrived to factory, start unloading");
                     });
                 }

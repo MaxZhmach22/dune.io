@@ -106,6 +106,7 @@ namespace Dune.IO
                 ref var harvesterComponent = ref harvesterPool.Get(entity);
                 harvesterComponent.HarvesterView.GetComponentInChildren<Renderer>(true).material = entityOutline.DefaultMaterial;
                 harvesterComponent.Target = spicePoint.gameObject;
+                harvesterComponent.SelectedSpicePoint = spicePoint.gameObject;
                 
                 var distance = Vector3.Distance(harvesterComponent.HarvesterView.transform.position, harvesterComponent.Target.transform.position);
                 harvesterComponent.Tween =

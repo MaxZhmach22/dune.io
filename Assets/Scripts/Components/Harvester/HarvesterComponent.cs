@@ -9,6 +9,7 @@ namespace Dune.IO
     {   
         public Harvester HarvesterView;
         public GameObject Target;
+        public GameObject SelectedSpicePoint;
         public TweenerCore<Vector3,Vector3,VectorOptions> Tween;
         public int HarvesterId;
     }

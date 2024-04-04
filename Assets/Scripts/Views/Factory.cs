@@ -8,5 +8,9 @@ namespace Dune.IO
         [field: BoxGroup("Settings")]
         [field: SerializeField]
         public float Capacity { get; set; } = 0;
+        
+        [field: BoxGroup("Settings")]
+        [field: SerializeField]
+        public float UploadingSpeed { get; set; } = 2;
     }
 }

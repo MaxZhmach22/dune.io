@@ -49,6 +49,8 @@ namespace Dune.IO {
                 .Add(new HarvesterMovingSystem())
                 .Add(new HarvesterOutlineSystem())
                 .Add(new HarvesterMiningSystem())
+                //
+                .Add(new UploadingSpice())
                 // register your systems here, for example:
                 // .Add (new TestSystem1 ())
                 // .Add (new TestSystem2 ())
