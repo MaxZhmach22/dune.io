@@ -429,6 +429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Capacity>k__BackingField: 0
+  <UploadingSpeed>k__BackingField: 15
 --- !u!1 &514268030
 GameObject:
   m_ObjectHideFlags: 0

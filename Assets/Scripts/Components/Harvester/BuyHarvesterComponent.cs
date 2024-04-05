@@ -2,9 +2,9 @@
 {
     public struct BuyHarvesterComponent
     {
-        public float Price;
+        public int Price;
 
-        public BuyHarvesterComponent(float price = 100)
+        public BuyHarvesterComponent(int price = 100)
         {
             Price = price;
         }

@@ -1,37 +1,34 @@
-﻿using Leopotam.EcsLite;
-using UniRx;
+﻿using System;
+using Unity.VisualScripting;
 
 namespace Dune.IO
 {
     public class ScoreService
     {
-        private float _score;
-
-        public Subject<float> ScoreSubject { get; } = new Subject<float>();
+        private int _score;
+        
+        public Action<int> OnScoreChanged;
 
         public ScoreService(Configuration configuration)
         {
             _score = configuration.StartScore;
         }
         
-        public void AddScore(float score)
+        public void AddScore(int score)
         {
             _score += score;
-            ScoreSubject.OnNext(_score);
+            OnScoreChanged?.Invoke(_score);
         }
         
-        public bool RemoveScore(float score)
+        public bool RemoveScore(int score)
         {
             if (_score < score)
             {
                 return false;
             }
-            else
-            {
-                _score -= score;
-                ScoreSubject.OnNext(_score);
-                return true;               
-            }
+            _score -= score;
+            OnScoreChanged?.Invoke(_score);
+            return true;      
         }
 
         public float GetScore() => _score;

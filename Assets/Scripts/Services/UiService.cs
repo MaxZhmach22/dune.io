@@ -57,13 +57,9 @@ namespace Dune.IO
                 })
                 .AddTo(monoBehaviour);
             
-            _scoreService.ScoreSubject
-                .DoOnSubscribe(() =>
-                {
-                    _scoreText.text = _scoreService.GetScore().ToString();
-                }) 
-                .Subscribe(score => _scoreText.text = score.ToString())
-                .AddTo(monoBehaviour);
+            
+            _scoreService.OnScoreChanged += SetScoreText;
+            monoBehaviour.destroyCancellationToken.Register(() => _scoreService.OnScoreChanged -= SetScoreText);
 
             _buyHarvesterButton.OnClickAsObservable()
                 .Subscribe(_ =>
@@ -75,5 +71,13 @@ namespace Dune.IO
             
             return this;
         }
+        
+        private void SetScoreText(int score)
+        {
+            _scoreText.text = score.ToString();
+        }
+        
+        
+        
     }
 }

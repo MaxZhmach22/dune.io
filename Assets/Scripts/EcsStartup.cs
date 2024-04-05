@@ -45,18 +45,13 @@ namespace Dune.IO {
             _world = new EcsWorld ();
             _systems = new EcsSystems (_world, Configuration);
             _systems
+                 //Harvester systems   
                 .Add(new BuyHarvesterSystem(scoreService))
                 .Add(new HarvesterMovingSystem())
                 .Add(new HarvesterOutlineSystem())
                 .Add(new HarvesterMiningSystem())
-                //
-                .Add(new UploadingSpice())
-                // register your systems here, for example:
-                // .Add (new TestSystem1 ())
-                // .Add (new TestSystem2 ())
-                
-                // register additional worlds here, for example:
-                // .AddWorld (new EcsWorld (), "events")
+                //Factory systems
+                .Add(new UploadingSpice(scoreService))
 #if UNITY_EDITOR
                 // add debug systems for custom worlds here, for example:
                 // .Add (new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem ("events"))

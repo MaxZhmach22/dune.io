@@ -8,7 +8,7 @@ namespace Dune.IO
     {
         [field: BoxGroup("Score settings")]
         [field: SerializeField]
-        public float StartScore { get; private set; } = 100;
+        public int StartScore { get; private set; } = 100;
         
         
         [field: BoxGroup("Harvester settings")] 
@@ -21,7 +21,7 @@ namespace Dune.IO
 
         [field: BoxGroup("Harvester settings")]
         [field: SerializeField]
-        public float StartHarvesterPrice { get; private set; } = 100;
+        public int StartHarvesterPrice { get; private set; } = 100;
         
         [field: BoxGroup("Harvester settings")]
         [field: SerializeField]

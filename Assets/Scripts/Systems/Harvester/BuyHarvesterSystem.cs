@@ -42,7 +42,7 @@ namespace Dune.IO
             }
         }
 
-        private bool ValidateSpice(float price)
+        private bool ValidateSpice(int price)
         {
             return _scoreService.RemoveScore(price);
         }
