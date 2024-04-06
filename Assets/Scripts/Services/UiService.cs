@@ -1,4 +1,5 @@
-﻿using Leopotam.EcsLite;
+﻿using System;
+using Leopotam.EcsLite;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -10,13 +11,12 @@ namespace Dune.IO
     public class UiService
     {
         private readonly EcsWorld _world;
-        
+
         private readonly Button _restartButton;
         private readonly TMP_Text _scoreText;
         private readonly Button _starButton;
         private readonly Button _buyHarvesterButton;
         private readonly GameObject _startPanel;
-        
         private readonly Configuration _configuration;
         private readonly ScoreService _scoreService;
 
@@ -29,18 +29,17 @@ namespace Dune.IO
             GameObject startPanel,
             Configuration configuration,
             ScoreService scoreService
-            )
+        )
         {
             _world = world;
             _restartButton = restartButton;
-            _scoreText = scoreText;
             _starButton = starButton;
             _buyHarvesterButton = buyHarvesterButton;
             _startPanel = startPanel;
             _configuration = configuration;
             _scoreService = scoreService;
+            _scoreText = scoreText;
         }
-
 
         public UiService Init(MonoBehaviour monoBehaviour)
         {
@@ -56,10 +55,6 @@ namespace Dune.IO
                     harvesterComponent.Price = _configuration.StartHarvesterPrice;
                 })
                 .AddTo(monoBehaviour);
-            
-            
-            _scoreService.OnScoreChanged += SetScoreText;
-            monoBehaviour.destroyCancellationToken.Register(() => _scoreService.OnScoreChanged -= SetScoreText);
 
             _buyHarvesterButton.OnClickAsObservable()
                 .Subscribe(_ =>
@@ -68,16 +63,14 @@ namespace Dune.IO
                     harvesterComponent.Price = _configuration.StartHarvesterPrice;
                 })
                 .AddTo(monoBehaviour);
-            
+
+
+            _scoreService.ScoreChanged
+                .DoOnSubscribe(() => { _scoreText.text = Math.Round(_scoreService.GetScore()).ToString(); })
+                .Subscribe(score => { _scoreText.text = Math.Round(score).ToString(); })
+                .AddTo(monoBehaviour);
+
             return this;
         }
-        
-        private void SetScoreText(int score)
-        {
-            _scoreText.text = score.ToString();
-        }
-        
-        
-        
     }
 }

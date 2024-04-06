@@ -34,16 +34,29 @@ namespace Dune.IO {
         [field: Foldout("Canvas")]
         [field: SerializeField]
         public GameObject StartPanel { get; private set; }
+
+
+        [Button("Update Score Text")]
+        public void UpdateScoreText()
+        {
+            
+        }
         
         EcsWorld _world;        
         IEcsSystems _systems;
 
         void Start () {
             
-            var scoreService = new ScoreService(Configuration);
             
             _world = new EcsWorld ();
             _systems = new EcsSystems (_world, Configuration);
+            
+            var scoreService = new ScoreService(Configuration);
+            var pointerService = new PointerService(_world).Init(this);
+            var uiService = new UiService(_world, RestartButton,  ScoreText,StartButton, BuyHarvesterButton, StartPanel, Configuration, scoreService)
+                .Init(this);
+            
+            
             _systems
                  //Harvester systems   
                 .Add(new BuyHarvesterSystem(scoreService))
@@ -59,11 +72,6 @@ namespace Dune.IO {
 #endif
                 .Inject()
                 .Init ();
-            
-            // Create pointer events subscription
-            var pointerService = new PointerService(_world).Init(this);
-            var uiService = new UiService(_world, RestartButton, ScoreText, StartButton, BuyHarvesterButton, StartPanel, Configuration, scoreService)
-                .Init(this);
         }
 
         void Update () {

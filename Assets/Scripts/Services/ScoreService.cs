@@ -1,23 +1,23 @@
-﻿using System;
-using Unity.VisualScripting;
+﻿using UniRx;
+
 
 namespace Dune.IO
 {
     public class ScoreService
     {
-        private int _score;
+        private float _score;
         
-        public Action<int> OnScoreChanged;
-
+        public Subject<float> ScoreChanged { get; private set; } = new Subject<float>();
+        
         public ScoreService(Configuration configuration)
         {
             _score = configuration.StartScore;
         }
         
-        public void AddScore(int score)
+        public void AddScore(float score)
         {
             _score += score;
-            OnScoreChanged?.Invoke(_score);
+            ScoreChanged.OnNext(_score);
         }
         
         public bool RemoveScore(int score)
@@ -27,7 +27,7 @@ namespace Dune.IO
                 return false;
             }
             _score -= score;
-            OnScoreChanged?.Invoke(_score);
+            ScoreChanged.OnNext(_score);
             return true;      
         }
 

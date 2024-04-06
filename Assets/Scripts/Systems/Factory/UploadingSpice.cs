@@ -32,7 +32,7 @@ namespace Dune.IO
                     harvesterComponent.HarvesterView.SpiceAmount -= Time.deltaTime * factoryComponent.FactoryView.UploadingSpeed;
                     var spice = Time.deltaTime * factoryComponent.FactoryView.UploadingSpeed;
                     factoryComponent.FactoryView.Capacity += spice;
-                    _scoreService.AddScore((int)spice);
+                    _scoreService.AddScore(spice);
                     Debug.Log($"Uploading spice {harvesterComponent.HarvesterView.SpiceAmount} / {factoryComponent.FactoryView.Capacity}");
                 }
                 else
