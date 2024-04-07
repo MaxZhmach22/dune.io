@@ -1,3 +1,4 @@
+using System;
 using Dune.IO;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
@@ -14,6 +15,10 @@ namespace Dune.IO {
         [field: BoxGroup("Configuration")]
         [field: SerializeField]
         public Configuration Configuration { get; private set; }
+        
+        [field: BoxGroup("Joystick")]
+        [field: SerializeField]
+        public FixedJoystick FixedJoystick { get; private set; }
         
         [field: Foldout("Canvas")]
         [field: SerializeField]
@@ -34,31 +39,33 @@ namespace Dune.IO {
         [field: Foldout("Canvas")]
         [field: SerializeField]
         public GameObject StartPanel { get; private set; }
-
-
-        [Button("Update Score Text")]
-        public void UpdateScoreText()
-        {
-            
-        }
         
         EcsWorld _world;        
-        IEcsSystems _systems;
+        IEcsSystems _updateSystems;
+        IEcsSystems _fixedUpdateSystems;
 
         void Start () {
             
-            
             _world = new EcsWorld ();
-            _systems = new EcsSystems (_world, Configuration);
+            _updateSystems = new EcsSystems (_world, Configuration);
+            _fixedUpdateSystems = new EcsSystems (_world, Configuration);
             
+            // Services
             var scoreService = new ScoreService(Configuration);
             var pointerService = new PointerService(_world).Init(this);
-            var uiService = new UiService(_world, RestartButton,  ScoreText,StartButton, BuyHarvesterButton, StartPanel, Configuration, scoreService)
+            var uiService = new UiService(_world, 
+                    RestartButton, 
+                    ScoreText,
+                    StartButton, 
+                    BuyHarvesterButton, 
+                    StartPanel, 
+                    Configuration, 
+                    scoreService)
                 .Init(this);
             
-            
-            _systems
-                 //Harvester systems   
+            //Update systems
+            _updateSystems
+                //Harvester systems   
                 .Add(new BuyHarvesterSystem(scoreService))
                 .Add(new HarvesterMovingSystem())
                 .Add(new HarvesterOutlineSystem())
@@ -72,20 +79,41 @@ namespace Dune.IO {
 #endif
                 .Inject()
                 .Init ();
+
+            //Fixed update systems
+            _fixedUpdateSystems
+                // Ornithopter systems
+                .Add(new OrnithopterInitSystem())
+                .Add(new OrnithopterMovingSystem(FixedJoystick))
+                .Inject()
+                .Init ();
         }
 
-        void Update () {
+        private void Update () {
             // process systems here.
-            _systems?.Run ();
+            _updateSystems?.Run ();
+        }
+
+        private void FixedUpdate()
+        {
+            _fixedUpdateSystems?.Run();
         }
 
         void OnDestroy () {
-            if (_systems != null) {
+            if (_updateSystems != null) {
                 // list of custom worlds will be cleared
                 // during IEcsSystems.Destroy(). so, you
                 // need to save it here if you need.
-                _systems.Destroy ();
-                _systems = null;
+                _updateSystems.Destroy ();
+                _updateSystems = null;
+            }
+            
+            if (_fixedUpdateSystems != null) {
+                // list of custom worlds will be cleared
+                // during IEcsSystems.Destroy(). so, you
+                // need to save it here if you need.
+                _fixedUpdateSystems.Destroy ();
+                _fixedUpdateSystems = null;
             }
             
             // cleanup custom worlds here.
