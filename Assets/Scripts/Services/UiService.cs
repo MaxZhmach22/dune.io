@@ -77,8 +77,16 @@ namespace Dune.IO
             _landingButton.OnClickAsObservable()
                 .Subscribe(_ =>
                 {
-                    Debug.Log("Landing button clicked");
-                    _world.GetPool<LandingComponent>().Add(ornithopter.EntityId);
+                    var pool = _world.GetPool<LandingComponent>();
+                    if (!pool.Has(ornithopter.EntityId))
+                    {
+                        Debug.Log("Landing button clicked");
+                        pool.Add(ornithopter.EntityId);
+                    }
+                    else
+                    {
+                        Debug.Log("Landing component is already added to the entity");
+                    }
                 })
                 .AddTo(monoBehaviour);
 
