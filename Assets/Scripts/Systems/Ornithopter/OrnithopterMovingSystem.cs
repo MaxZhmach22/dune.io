@@ -2,11 +2,12 @@
 using Leopotam.EcsLite.Di;
 using UnityEngine;
 
+
 namespace Dune.IO
 {
     public class OrnithopterMovingSystem : IEcsRunSystem
     {
-        private readonly EcsFilterInject<Inc<OrnithopterComponent>> _filter = default;
+        private readonly EcsFilterInject<Inc<OrnithopterComponent>, Exc<LandingComponent>> _filter = default;
         private readonly EcsSharedInject<Configuration> _configuration = default;
         private readonly FixedJoystick _joystick;
 

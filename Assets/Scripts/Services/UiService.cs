@@ -5,6 +5,7 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace Dune.IO
 {
@@ -12,10 +13,14 @@ namespace Dune.IO
     {
         private readonly EcsWorld _world;
 
-        private readonly Button _restartButton;
         private readonly TMP_Text _scoreText;
+        
+        private readonly Button _restartButton;
         private readonly Button _starButton;
         private readonly Button _buyHarvesterButton;
+        private readonly Button _fireButton;
+        private readonly Button _landingButton;
+        
         private readonly GameObject _startPanel;
         private readonly Configuration _configuration;
         private readonly ScoreService _scoreService;
@@ -26,6 +31,8 @@ namespace Dune.IO
             TMP_Text scoreText,
             Button starButton,
             Button buyHarvesterButton,
+            Button fireButton,
+            Button landingButton,
             GameObject startPanel,
             Configuration configuration,
             ScoreService scoreService
@@ -35,6 +42,8 @@ namespace Dune.IO
             _restartButton = restartButton;
             _starButton = starButton;
             _buyHarvesterButton = buyHarvesterButton;
+            _fireButton = fireButton;
+            _landingButton = landingButton;
             _startPanel = startPanel;
             _configuration = configuration;
             _scoreService = scoreService;
@@ -43,6 +52,8 @@ namespace Dune.IO
 
         public UiService Init(MonoBehaviour monoBehaviour)
         {
+            var ornithopter = Object.FindObjectOfType<Ornithopter>();
+            
             _restartButton.OnClickAsObservable()
                 .Subscribe(_ => SceneManager.LoadScene(SceneManager.GetActiveScene().name))
                 .AddTo(monoBehaviour);
@@ -56,6 +67,21 @@ namespace Dune.IO
                 })
                 .AddTo(monoBehaviour);
 
+            _fireButton.OnClickAsObservable()
+                .Subscribe(_ =>
+                {
+                    Debug.Log("Fire button clicked");
+                })
+                .AddTo(monoBehaviour);
+            
+            _landingButton.OnClickAsObservable()
+                .Subscribe(_ =>
+                {
+                    Debug.Log("Landing button clicked");
+                    _world.GetPool<LandingComponent>().Add(ornithopter.EntityId);
+                })
+                .AddTo(monoBehaviour);
+
             _buyHarvesterButton.OnClickAsObservable()
                 .Subscribe(_ =>
                 {
@@ -63,8 +89,7 @@ namespace Dune.IO
                     harvesterComponent.Price = _configuration.StartHarvesterPrice;
                 })
                 .AddTo(monoBehaviour);
-
-
+            
             _scoreService.ScoreChanged
                 .DoOnSubscribe(() => { _scoreText.text = Math.Round(_scoreService.GetScore()).ToString(); })
                 .Subscribe(score => { _scoreText.text = Math.Round(score).ToString(); })

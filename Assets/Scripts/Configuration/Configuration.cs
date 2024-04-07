@@ -12,7 +12,15 @@ namespace Dune.IO
         
         [field: BoxGroup("Ornithopter settings")]
         [field: SerializeField]
-        public float OrnithopterMaxSpeed { get; private set; } = 5;
+        public float OrnithopterMaxSpeed { get; private set; } = 5;        
+        
+        [field: BoxGroup("Ornithopter settings")]
+        [field: SerializeField]
+        public int LandingTime { get; private set; } = 2000;        
+        
+        [field: BoxGroup("Ornithopter settings")]
+        [field: SerializeField]
+        public float VelocityDecreasingTime { get; private set; } = 0.5f;
         
         
         [field: BoxGroup("Score settings")]

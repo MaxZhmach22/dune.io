@@ -40,6 +40,14 @@ namespace Dune.IO {
         [field: SerializeField]
         public GameObject StartPanel { get; private set; }
         
+        [field: Foldout("Canvas")]
+        [field: SerializeField]
+        public Button LandingButton { get; private set; }
+        
+        [field: Foldout("Canvas")]
+        [field: SerializeField]
+        public Button FireButton { get; private set; }
+        
         EcsWorld _world;        
         IEcsSystems _updateSystems;
         IEcsSystems _fixedUpdateSystems;
@@ -58,8 +66,10 @@ namespace Dune.IO {
                     ScoreText,
                     StartButton, 
                     BuyHarvesterButton, 
+                    FireButton,
+                    LandingButton,
                     StartPanel, 
-                    Configuration, 
+                    Configuration,
                     scoreService)
                 .Init(this);
             
@@ -85,6 +95,7 @@ namespace Dune.IO {
                 // Ornithopter systems
                 .Add(new OrnithopterInitSystem())
                 .Add(new OrnithopterMovingSystem(FixedJoystick))
+                .Add(new OrnithopterLandingSystem())
                 .Inject()
                 .Init ();
         }

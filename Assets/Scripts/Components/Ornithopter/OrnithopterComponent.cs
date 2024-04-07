@@ -3,5 +3,6 @@
     public struct OrnithopterComponent
     {
         public Ornithopter OrnithopterView;
+        public bool IsLanding;
     }
 }
