@@ -1,14 +1,12 @@
-using System;
-using Dune.IO;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using NaughtyAttributes;
 using TMPro;
 using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
+
 
 namespace Dune.IO {
     sealed class EcsStartup : MonoBehaviour {
@@ -48,22 +46,19 @@ namespace Dune.IO {
         [field: Foldout("Canvas")]
         [field: SerializeField]
         public Button FireButton { get; private set; }
-
-        [Button("Show Worm")]
-        public void ShowWorm()
-        {
-            var worm = FindObjectOfType<WormView>();
-            var pool = _world.GetPool<WormMovingComponent>();
-            if(!pool.Has(worm.EntityId))
-            {
-                ref var wormMovingComponent = ref pool.Add(worm.EntityId);
-                wormMovingComponent.TargetTransform = FindObjectOfType<Factory>().transform;
-            };
-        }
+        
+        [field: Foldout("Reference")]
+        [field: SerializeField]
+        public Factory Factory { get; private set; }
         
         EcsWorld _world;        
         IEcsSystems _updateSystems;
         IEcsSystems _fixedUpdateSystems;
+
+        private void Awake()
+        {
+            Factory ??= FindObjectOfType<Factory>();
+        }
 
         void Start () {
             
@@ -85,11 +80,13 @@ namespace Dune.IO {
                     Configuration,
                     scoreService)
                 .Init(this);
+
+            FactoryInit();
             
             //Update systems
             _updateSystems
                 //Harvester systems   
-                .Add(new BuyHarvesterSystem(scoreService))
+                .Add(new BuyHarvesterSystem(scoreService, Factory))
                 .Add(new HarvesterMovingSystem())
                 .Add(new HarvesterOutlineSystem())
                 .Add(new HarvesterMiningSystem())
@@ -98,6 +95,8 @@ namespace Dune.IO {
                 //Worm systems
                 .Add(new WormInitSystem())
                 .Add(new WormMovingSystem())
+                //Swallow systems
+                .Add(new SwallowTargetSystem())
 #if UNITY_EDITOR
                 // add debug systems for custom worlds here, for example:
                 // .Add (new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem ("events"))
@@ -115,7 +114,7 @@ namespace Dune.IO {
                 .Inject()
                 .Init ();
         }
-
+        
         private void Update () {
             // process systems here.
             _updateSystems?.Run ();
@@ -124,6 +123,29 @@ namespace Dune.IO {
         private void FixedUpdate()
         {
             _fixedUpdateSystems?.Run();
+        }
+        
+        private void FactoryInit()
+        {
+            Factory.HarvesterLandingPoint.ForEach(point =>
+            {
+                point.Collider.OnTriggerEnterAsObservable()
+                    .Subscribe(col =>
+                    {
+                        var ornithopter = col.GetComponent<Ornithopter>();
+                        ref var ornithopterComponent = ref _world.GetPool<OrnithopterComponent>().Get(ornithopter.EntityId);
+                        var harvester = point.GetComponentInChildren<Harvester>();
+                        if (harvester != null && !ornithopterComponent.IsCarryingHarvester)
+                        {
+                            ornithopterComponent.IsCarryingHarvester = true;
+                            harvester.transform.SetParent(ornithopter.transform);
+                            harvester.transform.localPosition = new Vector3(0, -2, 0);
+                        }
+
+                        Debug.Log(col, col.transform);
+                    })
+                    .AddTo(this);
+            });
         }
 
         void OnDestroy () {

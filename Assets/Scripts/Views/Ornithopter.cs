@@ -8,6 +8,7 @@ namespace Dune.IO
         public Rigidbody Rigidbody {get; private set;}
         public int EntityId { get; set; }
         
+        
         private void Awake()
         {
             Rigidbody = GetComponent<Rigidbody>();

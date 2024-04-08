@@ -13,13 +13,12 @@ namespace Dune.IO
         private readonly EcsPoolInject<HarvesterComponent> _harvesterPool = default;
 
         private ScoreService _scoreService;
-
-        private GameObject _harvestersParentObject;
+        private Factory _factory;
         
-        public BuyHarvesterSystem(ScoreService scoreService)
+        public BuyHarvesterSystem(ScoreService scoreService, Factory factory)
         {
             _scoreService = scoreService;
-            _harvestersParentObject = new GameObject("Harvesters");
+            _factory = factory;
         }
         
         public void Run(IEcsSystems systems)
@@ -51,8 +50,9 @@ namespace Dune.IO
         {
             var harvester = _defaultWorld.Value.NewEntity();
             ref var harvesterComponent = ref _harvesterPool.Value.Add(harvester);
-            var harvesterView = Object.Instantiate(configuration.HarvesterPrefab, Vector3.zero, Quaternion.identity,  _harvestersParentObject.transform);
+            var harvesterView = Object.Instantiate(configuration.HarvesterPrefab, Vector3.zero, Quaternion.identity,  _factory.HarvesterLandingPoint[0].transform);
             harvesterComponent.HarvesterView = harvesterView.GetComponent<Harvester>();
+            harvesterView.transform.localPosition = Vector3.zero;
             harvesterComponent.HarvesterView.HarvesterId = harvester;
             
             return ref harvesterComponent;

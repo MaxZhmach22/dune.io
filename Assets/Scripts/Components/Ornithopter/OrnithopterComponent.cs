@@ -4,5 +4,6 @@
     {
         public Ornithopter OrnithopterView;
         public bool IsLanding;
+        public bool IsCarryingHarvester;
     }
 }

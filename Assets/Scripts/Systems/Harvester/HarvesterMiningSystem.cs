@@ -10,7 +10,7 @@ namespace Dune.IO
         private readonly EcsPoolInject<MiningComponent> _miningPool = default;
         private readonly EcsPoolInject<HarvesterComponent> _harvesterComponent = default;
         private readonly EcsPoolInject<FactoryComponent> _factoryPool = default;
-        private readonly EcsFilterInject<Inc<MiningComponent, HarvesterComponent>> _filter = default;
+        private readonly EcsFilterInject<Inc<MiningComponent, HarvesterComponent>, Exc<SwallowComponent>> _filter = default;
         private readonly EcsSharedInject<Configuration> _configuration = default;
 
         public void Run(IEcsSystems systems)

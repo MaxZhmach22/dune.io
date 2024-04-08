@@ -10,7 +10,7 @@ namespace Dune.IO
     {
         private readonly EcsWorldInject _defaultWorld = default;
         private readonly EcsPoolInject<HarvesterComponent> _harvesterPool = default;
-        private readonly EcsFilterInject<Inc<HarvesterComponent>> _filter = default;
+        private readonly EcsFilterInject<Inc<HarvesterComponent>, Exc<SwallowComponent>> _filter = default;
         
         public void Run(IEcsSystems systems)
         {
