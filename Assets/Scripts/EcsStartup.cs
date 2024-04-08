@@ -8,6 +8,7 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace Dune.IO {
     sealed class EcsStartup : MonoBehaviour {
@@ -47,6 +48,18 @@ namespace Dune.IO {
         [field: Foldout("Canvas")]
         [field: SerializeField]
         public Button FireButton { get; private set; }
+
+        [Button("Show Worm")]
+        public void ShowWorm()
+        {
+            var worm = FindObjectOfType<WormView>();
+            var pool = _world.GetPool<WormMovingComponent>();
+            if(!pool.Has(worm.EntityId))
+            {
+                ref var wormMovingComponent = ref pool.Add(worm.EntityId);
+                wormMovingComponent.TargetTransform = FindObjectOfType<Factory>().transform;
+            };
+        }
         
         EcsWorld _world;        
         IEcsSystems _updateSystems;
@@ -82,6 +95,9 @@ namespace Dune.IO {
                 .Add(new HarvesterMiningSystem())
                 //Factory systems
                 .Add(new UploadingSpice(scoreService))
+                //Worm systems
+                .Add(new WormInitSystem())
+                .Add(new WormMovingSystem())
 #if UNITY_EDITOR
                 // add debug systems for custom worlds here, for example:
                 // .Add (new Leopotam.EcsLite.UnityEditor.EcsWorldDebugSystem ("events"))

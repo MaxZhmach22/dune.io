@@ -43,5 +43,9 @@ namespace Dune.IO
         [field: BoxGroup("Harvester settings")]
         [field: SerializeField]
         public float StartMiningSpeed { get; private set; } = 2;
+        
+        [field: BoxGroup("Worm settings")]
+        [field: SerializeField]
+        public float WormStopDistance { get; private set; } = 1;
     }
 }
