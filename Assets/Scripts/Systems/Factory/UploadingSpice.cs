@@ -13,7 +13,9 @@ namespace Dune.IO
         private readonly EcsPoolInject<HarvesterComponent> _harvesterPool = default;
         private readonly EcsPoolInject<FactoryComponent> _factoryPool = default;
         private readonly EcsPoolInject<MiningComponent> _miningPool = default;
+        private readonly EcsPoolInject<FullTankComponent> _fullTankPool = default;
         private readonly EcsFilterInject<Inc<FactoryComponent, HarvesterComponent>> _filter = default;
+        
 
         public UploadingSpice(ScoreService scoreService)
         {
@@ -40,19 +42,7 @@ namespace Dune.IO
                     harvesterComponent.HarvesterView.SpiceAmount = 0;
                     factoryComponent.FactoryView.Capacity = (float)Math.Round(factoryComponent.FactoryView.Capacity);
                     _factoryPool.Value.Del(entity);
-                    if (harvesterComponent.SelectedSpicePoint != null)
-                    {
-                        var distance = Vector3.Distance(harvesterComponent.HarvesterView.transform.position, harvesterComponent.SelectedSpicePoint.transform.position);
-                        harvesterComponent.Tween =
-                            harvesterComponent.HarvesterView.transform.DOMove(harvesterComponent.SelectedSpicePoint.transform.position, distance * harvesterComponent.HarvesterView.Speed);
-                        harvesterComponent.Tween.SetUpdate(UpdateType.Manual);
-                        harvesterComponent.Tween.SetEase(Ease.InOutSine);
-                        harvesterComponent.Tween.OnComplete(() =>
-                        {
-                            _miningPool.Value.Add(entity);
-                            Debug.Log("Harvester arrived, start mining");
-                        }); 
-                    }
+                    if (_fullTankPool.Value.Has(entity))_fullTankPool.Value.Del(entity);
                 }
             }
         }

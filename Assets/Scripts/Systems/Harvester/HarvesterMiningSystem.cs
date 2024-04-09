@@ -10,7 +10,8 @@ namespace Dune.IO
         private readonly EcsPoolInject<MiningComponent> _miningPool = default;
         private readonly EcsPoolInject<HarvesterComponent> _harvesterComponent = default;
         private readonly EcsPoolInject<FactoryComponent> _factoryPool = default;
-        private readonly EcsFilterInject<Inc<MiningComponent, HarvesterComponent>, Exc<SwallowComponent>> _filter = default;
+        private readonly EcsFilterInject<Inc<MiningComponent, HarvesterComponent>, Exc<SwallowComponent, FullTankComponent>> _filter = default;
+        private readonly EcsPoolInject<FullTankComponent> _fullTankPool = default;
         private readonly EcsSharedInject<Configuration> _configuration = default;
 
         public void Run(IEcsSystems systems)
@@ -27,8 +28,8 @@ namespace Dune.IO
                 if (miningComponent.Amount >= harvesterComponent.HarvesterView.SpiceCapacity)
                 {
                     harvesterComponent.HarvesterView.SpiceAmount = harvesterComponent.HarvesterView.SpiceCapacity;
+                    _fullTankPool.Value.Add(entity);
                     Debug.Log($"Harvester is full {harvesterComponent.HarvesterView.SpiceAmount}");
-                    _miningPool.Value.Del(entity);
                 }
             }
         }

@@ -40,20 +40,42 @@ namespace Dune.IO
                         ref var ornithopterComponent = ref _pool.Value.Get(ornithopter.EntityId);
                         if (ornithopterComponent.IsCarryingHarvester)
                         {
-                            var harvester = ornithopter.GetComponentInChildren<Harvester>(true);
-                            harvester.transform.SetParent(point.transform);
-                            if(_miningPool.Value.Has(harvester.HarvesterId)) return;
-                            _miningPool.Value.Add(harvester.HarvesterId);
-                            ornithopterComponent.IsCarryingHarvester = false;
-                            Debug.Log("Spice point triggered! Harvester is start mining!");
+                            LandHarvester(ornithopter, point, ref ornithopterComponent);
                         }
                         else
                         {
-                            Debug.Log("No harvester on the ornithopter!");
+                            var harvester = point.GetComponentInChildren<Harvester>(true);
+                            if (harvester != null)
+                            {
+                                PickUpHarvester(ornithopter, harvester, ref ornithopterComponent);
+                            }
+                            else
+                            {
+                                Debug.Log("No harvester on the ornithopter!");
+                            }
                         }
                     })
                     .AddTo(_disposable);
             });
+        }
+
+        private void LandHarvester(Ornithopter ornithopter, SpicePoint point, ref OrnithopterComponent ornithopterComponent)
+        {
+            var harvester = ornithopter.GetComponentInChildren<Harvester>(true);
+            harvester.transform.SetParent(point.transform);
+            if(_miningPool.Value.Has(harvester.HarvesterId)) return;
+            _miningPool.Value.Add(harvester.HarvesterId);
+            ornithopterComponent.IsCarryingHarvester = false;
+            Debug.Log("Spice point triggered! Harvester is start mining!");
+        }
+
+        private void PickUpHarvester(Ornithopter ornithopter, Harvester harvester, ref OrnithopterComponent ornithopterComponent)
+        {
+            harvester.transform.SetParent(ornithopter.transform);
+            if(!_miningPool.Value.Has(harvester.HarvesterId)) return;
+            _miningPool.Value.Del(harvester.HarvesterId);
+            ornithopterComponent.IsCarryingHarvester = true;
+            Debug.Log("Harvester is stop mining! Harvester is on the ornithopter!");
         }
 
         public void Destroy(IEcsSystems systems)

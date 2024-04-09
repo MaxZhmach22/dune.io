@@ -9,14 +9,20 @@ namespace Dune.IO
         private readonly EcsSharedInject<Configuration> _configuration = default;
         private readonly EcsWorldInject _world = default;
         private readonly EcsPoolInject<WormComponent> _wormPool = default;
+        private readonly EcsPoolInject<ActiveComponent> _activeWormPool = default;
 
         public void Init(IEcsSystems systems)
         {
-            var wormView = Object.FindObjectOfType<WormView>();
-            var wormEntity = _world.Value.NewEntity();
-            ref var wormComponent = ref _wormPool.Value.Add(wormEntity);
-            wormComponent.WormView = wormView;
-            wormView.EntityId = wormEntity;
+            var worms = Object.FindObjectsOfType<WormView>(true);
+            
+            foreach (var worm in worms)
+            {
+                var wormEntity = _world.Value.NewEntity();
+                ref var wormComponent = ref _wormPool.Value.Add(wormEntity);
+                if(worm.gameObject.activeSelf) _activeWormPool.Value.Add(wormEntity);
+                wormComponent.WormView = worm;
+                worm.EntityId = wormEntity;
+            }
         }
     }
 }

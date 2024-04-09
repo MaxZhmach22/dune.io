@@ -8,10 +8,10 @@ namespace Dune.IO
 {
     public class WormMovingSystem : IEcsRunSystem
     {
-        private readonly EcsFilterInject<Inc<WormComponent>, Exc<SwallowComponent>> _filter = default;
+        private readonly EcsFilterInject<Inc<WormComponent, ActiveComponent>, Exc<SwallowComponent>> _filter = default;
         private readonly EcsFilterInject<Inc<WormComponent, WellFedComponent>> _swallowFilter = default;
         private readonly EcsPoolInject<SwallowComponent> _swallowPool = default;
-        private readonly EcsFilterInject<Inc<HarvesterComponent ,MiningComponent>> _miningFilter = default; 
+        private readonly EcsFilterInject<Inc<HarvesterComponent, MiningComponent>> _miningFilter = default; 
         private readonly EcsSharedInject<Configuration> _configuration = default;
 
         public void Run(IEcsSystems systems)

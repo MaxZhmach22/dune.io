@@ -36,6 +36,7 @@ namespace Dune.IO
                         var ornithopter = col.GetComponent<Ornithopter>();
                         ref var ornithopterComponent = ref _pool.Value.Get(ornithopter.EntityId);
                         var harvester = point.GetComponentInChildren<Harvester>();
+                        
                         if (harvester != null && !ornithopterComponent.IsCarryingHarvester)
                         {
                             ornithopterComponent.IsCarryingHarvester = true;
@@ -43,7 +44,17 @@ namespace Dune.IO
                             harvester.transform.localPosition = new Vector3(0, -2, 0);
                         }
 
-                        Debug.Log(col, col.transform);
+                        else if(harvester == null && ornithopterComponent.IsCarryingHarvester)
+                        {
+                            harvester = ornithopter.GetComponentInChildren<Harvester>(true);
+                            ornithopterComponent.IsCarryingHarvester = false;
+                            harvester.transform.SetParent(point.transform);
+                            harvester.transform.localPosition = new Vector3(0, 0, 0);
+                            var factory = point.GetComponentInParent<Factory>();
+                            ref var factoryComponent = ref _world.Value.GetPool<FactoryComponent>().Add(harvester.HarvesterId);
+                            factoryComponent.FactoryView = factory;
+                        }
+                        
                     })
                     .AddTo(_disposable);
             });

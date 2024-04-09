@@ -16,7 +16,7 @@ namespace Dune.IO
         
         [field: BoxGroup("Ornithopter settings")]
         [field: SerializeField]
-        public int LandingTime { get; private set; } = 2000;        
+        public int LandingTime { get; private set; } = 500;        
         
         [field: BoxGroup("Ornithopter settings")]
         [field: SerializeField]
