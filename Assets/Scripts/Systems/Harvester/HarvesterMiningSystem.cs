@@ -29,20 +29,6 @@ namespace Dune.IO
                     harvesterComponent.HarvesterView.SpiceAmount = harvesterComponent.HarvesterView.SpiceCapacity;
                     Debug.Log($"Harvester is full {harvesterComponent.HarvesterView.SpiceAmount}");
                     _miningPool.Value.Del(entity);
-
-                    harvesterComponent.Target = Object.FindObjectOfType<Factory>().gameObject;
-                    var distance = Vector3.Distance(harvesterComponent.HarvesterView.transform.position, harvesterComponent.Target.transform.position);
-                    harvesterComponent.Tween =
-                        harvesterComponent.HarvesterView.transform.DOMove(harvesterComponent.Target.transform.position, distance * harvesterComponent.HarvesterView.Speed);
-                    harvesterComponent.Tween.SetUpdate(UpdateType.Manual);
-                    harvesterComponent.Tween.SetEase(Ease.InOutSine);
-                    harvesterComponent.Tween.OnComplete(() =>
-                    {
-                        ref var harvesterComponent = ref _harvesterComponent.Value.Get(entity);
-                        ref var  factoryComponent = ref _factoryPool.Value.Add(harvesterComponent.HarvesterView.HarvesterId);
-                        factoryComponent.FactoryView = harvesterComponent.Target.GetComponent<Factory>();
-                        Debug.Log("Harvester arrived to factory, start unloading");
-                    });
                 }
             }
         }

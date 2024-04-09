@@ -18,7 +18,6 @@ namespace Dune.IO
         {
             MovingToTarget();
             AfterSwallowMovement();
-            
         }
         
         private void MovingToTarget()

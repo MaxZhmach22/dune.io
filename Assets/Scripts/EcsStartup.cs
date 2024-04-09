@@ -1,9 +1,8 @@
+using System.Collections.Generic;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using NaughtyAttributes;
 using TMPro;
-using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -50,6 +49,10 @@ namespace Dune.IO {
         [field: Foldout("Reference")]
         [field: SerializeField]
         public Factory Factory { get; private set; }
+
+        [field: Foldout("Reference")]
+        [field: SerializeField]
+        public List<SpicePoint> SpicePoints { get; private set; } = new();
         
         EcsWorld _world;        
         IEcsSystems _updateSystems;
@@ -58,6 +61,7 @@ namespace Dune.IO {
         private void Awake()
         {
             Factory ??= FindObjectOfType<Factory>();
+            if(SpicePoints.Count == 0) SpicePoints.AddRange(FindObjectsOfType<SpicePoint>());
         }
 
         void Start () {
@@ -80,8 +84,6 @@ namespace Dune.IO {
                     Configuration,
                     scoreService)
                 .Init(this);
-
-            FactoryInit();
             
             //Update systems
             _updateSystems
@@ -90,7 +92,10 @@ namespace Dune.IO {
                 .Add(new HarvesterMovingSystem())
                 .Add(new HarvesterOutlineSystem())
                 .Add(new HarvesterMiningSystem())
+                //Spice systems
+                .Add(new SpicePointsInitializer(SpicePoints))
                 //Factory systems
+                .Add(new FactoryInitializer(Factory))
                 .Add(new UploadingSpice(scoreService))
                 //Worm systems
                 .Add(new WormInitSystem())
@@ -125,29 +130,6 @@ namespace Dune.IO {
             _fixedUpdateSystems?.Run();
         }
         
-        private void FactoryInit()
-        {
-            Factory.HarvesterLandingPoint.ForEach(point =>
-            {
-                point.Collider.OnTriggerEnterAsObservable()
-                    .Subscribe(col =>
-                    {
-                        var ornithopter = col.GetComponent<Ornithopter>();
-                        ref var ornithopterComponent = ref _world.GetPool<OrnithopterComponent>().Get(ornithopter.EntityId);
-                        var harvester = point.GetComponentInChildren<Harvester>();
-                        if (harvester != null && !ornithopterComponent.IsCarryingHarvester)
-                        {
-                            ornithopterComponent.IsCarryingHarvester = true;
-                            harvester.transform.SetParent(ornithopter.transform);
-                            harvester.transform.localPosition = new Vector3(0, -2, 0);
-                        }
-
-                        Debug.Log(col, col.transform);
-                    })
-                    .AddTo(this);
-            });
-        }
-
         void OnDestroy () {
             if (_updateSystems != null) {
                 // list of custom worlds will be cleared
