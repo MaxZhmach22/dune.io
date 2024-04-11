@@ -72,7 +72,6 @@ namespace Dune.IO {
             
             // Services
             var scoreService = new ScoreService(Configuration);
-            var pointerService = new PointerService(_world).Init(this);
             var uiService = new UiService(_world, 
                     RestartButton, 
                     ScoreText,
@@ -89,11 +88,11 @@ namespace Dune.IO {
             _updateSystems
                 //Harvester systems   
                 .Add(new BuyHarvesterSystem(scoreService, Factory))
-                .Add(new HarvesterMovingSystem())
                 .Add(new HarvesterOutlineSystem())
                 .Add(new HarvesterMiningSystem())
                 //Spice systems
                 .Add(new SpicePointsInitializer(SpicePoints))
+                .Add(new HarvesterSpicePointMovement())
                 //Factory systems
                 .Add(new FactoryInitializer(Factory))
                 .Add(new UploadingSpice(scoreService))

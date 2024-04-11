@@ -66,16 +66,18 @@ namespace Dune.IO
             if(_miningPool.Value.Has(harvester.HarvesterId)) return;
             _miningPool.Value.Add(harvester.HarvesterId);
             ornithopterComponent.IsCarryingHarvester = false;
-            Debug.Log("Spice point triggered! Harvester is start mining!");
+            Debug.Log("Spice point triggered! Harvester is start mining!", point);
         }
 
         private void PickUpHarvester(Ornithopter ornithopter, Harvester harvester, ref OrnithopterComponent ornithopterComponent)
         {
             harvester.transform.SetParent(ornithopter.transform);
+            harvester.transform.localPosition = new Vector3(0, -2, 0);
             if(!_miningPool.Value.Has(harvester.HarvesterId)) return;
             _miningPool.Value.Del(harvester.HarvesterId);
             ornithopterComponent.IsCarryingHarvester = true;
-            Debug.Log("Harvester is stop mining! Harvester is on the ornithopter!");
+            
+            Debug.Log("Harvester is stop mining! Harvester is on the ornithopter!", harvester);
         }
 
         public void Destroy(IEcsSystems systems)
