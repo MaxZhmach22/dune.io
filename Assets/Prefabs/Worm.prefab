@@ -152,4 +152,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <WormSpeed>k__BackingField: 5
   <WormFedSpeed>k__BackingField: 1
+  <WormFreeMovingSpeed>k__BackingField: 2
   <EntityId>k__BackingField: 0
+  <RandomMovingPoint>k__BackingField: {x: 0, y: 0, z: 0}

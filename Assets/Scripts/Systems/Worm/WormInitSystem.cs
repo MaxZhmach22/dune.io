@@ -21,6 +21,8 @@ namespace Dune.IO
                 ref var wormComponent = ref _wormPool.Value.Add(wormEntity);
                 if(worm.gameObject.activeSelf) _activeWormPool.Value.Add(wormEntity);
                 wormComponent.WormView = worm;
+                wormComponent.Target = null;
+                wormComponent.HasTarget = false;
                 worm.EntityId = wormEntity;
             }
         }
