@@ -8,20 +8,56 @@ namespace Dune.IO
 {
     public class WormMovingSystem : IEcsRunSystem
     {
-        private readonly EcsFilterInject<Inc<WormComponent, ActiveComponent, MoveToTargetComponent>, Exc<SwallowComponent>> _wormsMovingToTargetFilter = default;
-        private readonly EcsFilterInject<Inc<WormComponent, ActiveComponent>, Exc<SwallowComponent, MoveToTargetComponent>> _wormsFreeMovingFilter = default;
-        private readonly EcsPoolInject<MoveToTargetComponent> _moveToTargetPool = default;
-
-        private readonly EcsFilterInject<Inc<WormComponent, WellFedComponent>> _swallowFilter = default;
-        private readonly EcsPoolInject<SwallowComponent> _swallowPool = default;
-        private readonly EcsFilterInject<Inc<HarvesterComponent, MiningComponent>> _miningFilter = default; 
         private readonly EcsSharedInject<Configuration> _configuration = default;
+        
+        private readonly EcsFilterInject<Inc<WormComponent, ActiveComponent, MoveToTargetComponent>, Exc<WellFedComponent>> _wormsMovingToTargetFilter = default;
+        private readonly EcsFilterInject<Inc<WormComponent, ActiveComponent>, Exc<MoveToTargetComponent, WellFedComponent>> _wormsFreeMovingFilter = default;
+        private readonly EcsFilterInject<Inc<WormComponent, WellFedComponent>> _afterSwallowHarvesterFilter = default;
+        private readonly EcsPoolInject<MoveToTargetComponent> _moveToTargetPool = default;
+        private readonly EcsPoolInject<SwallowComponent> _swallowPool = default;
+
+        private readonly EcsFilterInject<Inc<HarvesterComponent, MiningComponent>, Exc<SwallowComponent>> _miningHarvesterFilter = default; 
         
         public void Run(IEcsSystems systems)
         {
+            FindTarget();
             FreeMoving();
             MovingToTarget();
             AfterSwallowMovement();
+        }
+
+        private void FindTarget()
+        {
+            foreach (var harvesterEntity in _miningHarvesterFilter.Value)
+            {
+                ref var harvesterComponent = ref _miningHarvesterFilter.Pools.Inc1.Get(harvesterEntity);
+                FindNearestWorm(ref harvesterComponent);
+            }
+        }
+
+        private void FindNearestWorm(ref HarvesterComponent harvesterComponent)
+        {
+            if(harvesterComponent.IsWormsTarget) return;
+            
+            var nearestDistance = float.MaxValue;
+            var nearestWorm = 0;
+            foreach (var wormEntity in _wormsFreeMovingFilter.Value)
+            {
+                ref var wormComponent = ref _wormsFreeMovingFilter.Pools.Inc1.Get(wormEntity);
+                var distance = Vector3.Distance(wormComponent.WormView.transform.position,
+                    harvesterComponent.HarvesterView.transform.position);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestWorm = wormEntity;
+                }
+            }
+
+            ref var nearestWormComponent = ref _wormsFreeMovingFilter.Pools.Inc1.Get(nearestWorm);
+            nearestWormComponent.Target = harvesterComponent.HarvesterView;
+            nearestWormComponent.HasTarget = true;
+            harvesterComponent.IsWormsTarget = true;
+            _moveToTargetPool.Value.Add(nearestWorm);
         }
 
         private void FreeMoving()
@@ -59,39 +95,40 @@ namespace Dune.IO
             foreach (var wormEntity in _wormsMovingToTargetFilter.Value)
             {
                 ref var wormComponent = ref _wormsMovingToTargetFilter.Pools.Inc1.Get(wormEntity);
-                MovingToTarget(wormComponent, wormEntity);
+                var targetPosition = wormComponent.Target.transform.position;
+                var endPosition = new Vector3(targetPosition.x, 0, targetPosition.z);
+                var distance = Vector3.Distance(wormComponent.WormView.transform.position, endPosition);
+                if (distance <= _configuration.Value.WormStopDistance)
+                {
+                    
+                    Debug.Log("Worm reached target position!");
+                    ref var harvesterComponent = ref _miningHarvesterFilter.Pools.Inc1.Get(wormComponent.Target.HarvesterId);
+                    harvesterComponent.IsWormsTarget = false;
+                    wormComponent.HasTarget = false;
+                    ref var swallowComponent =  ref _swallowPool.Value.Add(wormComponent.Target.HarvesterId);
+                    swallowComponent.TargetTransform = harvesterComponent.HarvesterView.transform;
+                    _miningHarvesterFilter.Pools.Inc2.Del(wormComponent.Target.HarvesterId);
+                    wormComponent.Target = null;
+                    _wormsMovingToTargetFilter.Pools.Inc3.Del(wormEntity);
+                    ref var fedComponent = ref _afterSwallowHarvesterFilter.Pools.Inc2.Add(wormEntity);
+                    fedComponent.Position = wormComponent.WormView.transform.position +
+                                            new Vector3(Random.Range(-7, 7), -1f, Random.Range(-7, 7));
+                }
+                else
+                {
+                    wormComponent.WormView.transform.position = Vector3.MoveTowards(
+                        wormComponent.WormView.transform.position, endPosition,
+                        wormComponent.WormView.WormSpeed * Time.deltaTime);
+                }
             }
         }
         
-
-        private void MovingToTarget(WormComponent wormComponent, int wormEntity)
-        {
-            var targetPosition = wormComponent.Target.transform.position;
-            var endPosition = new Vector3(targetPosition.x, 0, targetPosition.z);
-            var distance = Vector3.Distance(wormComponent.WormView.transform.position, endPosition);
-            if (distance <= _configuration.Value.WormStopDistance)
-            {
-                Debug.Log("Worm reached target position!");
-                ref var swallowedComponent = ref _swallowPool.Value.Add(wormComponent.Target.HarvesterId);
-                swallowedComponent.TargetTransform = wormComponent.Target.transform;
-                ref var fedComponent = ref _swallowFilter.Pools.Inc2.Add(wormEntity);
-                fedComponent.Position = wormComponent.WormView.transform.position +
-                                        new Vector3(Random.Range(-7, 7), -1f, Random.Range(-7, 7));
-            }
-            else
-            {
-                wormComponent.WormView.transform.position = Vector3.MoveTowards(
-                    wormComponent.WormView.transform.position, endPosition,
-                    wormComponent.WormView.WormSpeed * Time.deltaTime);
-            }
-        }
-
         private void AfterSwallowMovement()
         {
-            foreach (var wormEntity in _swallowFilter.Value)
+            foreach (var wormEntity in _afterSwallowHarvesterFilter.Value)
             {
-                ref var wormComponent = ref _swallowFilter.Pools.Inc1.Get(wormEntity);
-                ref var fedComponent = ref _swallowFilter.Pools.Inc2.Get(wormEntity);
+                ref var wormComponent = ref _afterSwallowHarvesterFilter.Pools.Inc1.Get(wormEntity);
+                ref var fedComponent = ref _afterSwallowHarvesterFilter.Pools.Inc2.Get(wormEntity);
                 
                 var distance = Vector3.Distance(wormComponent.WormView.transform.position, fedComponent.Position);
                 
@@ -101,7 +138,7 @@ namespace Dune.IO
                 
                 if(distance <= 0.5)
                 {
-                    _swallowFilter.Pools.Inc2.Del(wormEntity);
+                    _afterSwallowHarvesterFilter.Pools.Inc2.Del(wormEntity);
                     Debug.Log("Worm down!");
                 }
             }
