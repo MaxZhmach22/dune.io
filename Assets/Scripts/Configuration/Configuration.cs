@@ -6,6 +6,10 @@ namespace Dune.IO
     [CreateAssetMenu(fileName = "Config", menuName = "Configuration/Dune.io")]
     public sealed class Configuration : ScriptableObject
     {
+        [field: BoxGroup("Game settings")]
+        [field: SerializeField]
+        public int FinalGoal { get; private set; } = 150;
+        
         [field: BoxGroup("Ornithopter settings")]
         [field: SerializeField]
         public float OrnithopterSpeedForce { get; private set; } = .3f;

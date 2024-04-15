@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Speed>k__BackingField: 2
   <Level>k__BackingField: 1
-  <SpiceCapacity>k__BackingField: 25
+  <SpiceCapacity>k__BackingField: 100
   <SpiceAmount>k__BackingField: 0
   <HarvesterId>k__BackingField: 0
 --- !u!65 &1652874369752097479

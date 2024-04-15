@@ -48,6 +48,7 @@ namespace Dune.IO
             _configuration = configuration;
             _scoreService = scoreService;
             _scoreText = scoreText;
+            Time.timeScale = 0;
         }
 
         public UiService Init(MonoBehaviour monoBehaviour)
@@ -62,6 +63,7 @@ namespace Dune.IO
                 .Subscribe(_ =>
                 {
                     _startPanel.SetActive(false);
+                    Time.timeScale = 1;
                     ref var harvesterComponent = ref _world.GetPool<BuyHarvesterComponent>().Add(_world.NewEntity());
                     harvesterComponent.Price = _configuration.StartHarvesterPrice;
                 })

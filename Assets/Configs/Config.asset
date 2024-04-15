@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c312c2a3c2154daa8d85fabb411a4c28, type: 3}
   m_Name: Config
   m_EditorClassIdentifier: 
+  <FinalGoal>k__BackingField: 1000
   <OrnithopterSpeedForce>k__BackingField: 0.3
   <OrnithopterMaxSpeed>k__BackingField: 10
   <LandingTime>k__BackingField: 500
