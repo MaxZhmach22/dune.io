@@ -11,11 +11,11 @@ TagManager:
   - Ornithopter
   - Water
   - UI
-  - Harvester
+  - IdleHarvester
   - LandingPoint
   - SpicePoint
   - Minimap
-  - 
+  - MiningHarvester
   - 
   - 
   - 

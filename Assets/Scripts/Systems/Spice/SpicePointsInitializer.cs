@@ -63,6 +63,7 @@ namespace Dune.IO
         {
             var harvester = ornithopter.GetComponentInChildren<Harvester>(true);
             harvester.transform.SetParent(point.transform);
+            harvester.gameObject.layer = (int)Layers.MiningHarvester;
             if(_miningPool.Value.Has(harvester.HarvesterId)) return;
             _miningPool.Value.Add(harvester.HarvesterId);
             ornithopterComponent.IsCarryingHarvester = false;
@@ -73,6 +74,7 @@ namespace Dune.IO
         {
             harvester.transform.SetParent(ornithopter.transform);
             harvester.transform.localPosition = new Vector3(0, -2, 0);
+            harvester.gameObject.layer = (int)Layers.IdleHarvester;
             if(!_miningPool.Value.Has(harvester.HarvesterId)) return;
             _miningPool.Value.Del(harvester.HarvesterId);
             ornithopterComponent.IsCarryingHarvester = true;

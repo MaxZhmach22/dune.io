@@ -17,13 +17,33 @@ namespace Dune.IO
         private readonly EcsPoolInject<SwallowComponent> _swallowPool = default;
 
         private readonly EcsFilterInject<Inc<HarvesterComponent, MiningComponent>, Exc<SwallowComponent>> _miningHarvesterFilter = default; 
+        private readonly EcsFilterInject<Inc<HarvesterComponent>, Exc<SwallowComponent, MiningComponent>> _finishMiningHarvesterFilter = default; 
         
+
         public void Run(IEcsSystems systems)
         {
+            ClearTarget();
             FindTarget();
             FreeMoving();
             MovingToTarget();
             AfterSwallowMovement();
+        }
+
+        private void ClearTarget()
+        {
+            foreach (var harvesterEntity in _finishMiningHarvesterFilter.Value)
+            {
+                ref var harvesterComponent = ref _miningHarvesterFilter.Pools.Inc1.Get(harvesterEntity);
+                foreach (var wormEntity in _wormsMovingToTargetFilter.Value)
+                {
+                    ref var wormComponent = ref _wormsMovingToTargetFilter.Pools.Inc1.Get(wormEntity);
+                    if (wormComponent.Target != harvesterComponent.HarvesterView) continue;
+                    wormComponent.HasTarget = false;
+                    wormComponent.Target = null;
+                    harvesterComponent.IsWormsTarget = false;
+                    _wormsMovingToTargetFilter.Pools.Inc3.Del(wormEntity);
+                }
+            }
         }
 
         private void FindTarget()
