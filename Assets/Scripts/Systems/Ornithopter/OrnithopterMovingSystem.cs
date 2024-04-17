@@ -22,10 +22,22 @@ namespace Dune.IO
             {
                 ref var ornithopterComponent = ref _filter.Pools.Inc1.Get(entity);
                 var forceDirection = _joystick.Direction;
-                ornithopterComponent.OrnithopterView.Rigidbody.AddForce(
-                    new Vector3(forceDirection.x, 0, forceDirection.y) * _configuration.Value.OrnithopterSpeedForce, ForceMode.VelocityChange);
+                var localDirection = new Vector3(forceDirection.x, 0, forceDirection.y);
+                var forceVector = ornithopterComponent.OrnithopterView.transform.TransformDirection(localDirection) * _configuration.Value.OrnithopterSpeedForce;
+                ornithopterComponent.OrnithopterView.Rigidbody.AddForce(forceVector, ForceMode.VelocityChange);
                 var clampedVelocity = Vector3.ClampMagnitude(ornithopterComponent.OrnithopterView.Rigidbody.velocity, _configuration.Value.OrnithopterMaxSpeed);
                 ornithopterComponent.OrnithopterView.Rigidbody.velocity = clampedVelocity;
+                if (forceDirection == Vector2.zero)
+                {
+                    ornithopterComponent.OrnithopterView.ParentModel.transform.forward =
+                        ornithopterComponent.PreviousLookDirection;
+                }
+                else
+                {
+                    var normalized = forceVector.normalized;
+                    ornithopterComponent.OrnithopterView.ParentModel.transform.forward = normalized;
+                    ornithopterComponent.PreviousLookDirection = normalized;
+                }
             }
         }
     }

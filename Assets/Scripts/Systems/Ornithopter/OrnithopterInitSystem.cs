@@ -19,6 +19,7 @@ namespace Dune.IO
             var ornithopterView = Object.FindObjectOfType<Ornithopter>();
             ornithopterComponent.OrnithopterView = ornithopterView;
             ornithopterView.EntityId = ornithopter;
+            ornithopterComponent.PreviousLookDirection = Vector3.zero;
         }
     }
 }
