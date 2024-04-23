@@ -26,6 +26,9 @@ namespace Dune.IO
         [field: SerializeField]
         public float VelocityDecreasingTime { get; private set; } = 0.5f;
         
+        [field: BoxGroup("Ornithopter settings")]
+        [field: SerializeField]
+        public float OrnithopterRotationSpeed { get; private set; } = 5f;
         
         [field: BoxGroup("Score settings")]
         [field: SerializeField]
@@ -51,5 +54,6 @@ namespace Dune.IO
         [field: BoxGroup("Worm settings")]
         [field: SerializeField]
         public float WormStopDistance { get; private set; } = 1;
+
     }
 }
