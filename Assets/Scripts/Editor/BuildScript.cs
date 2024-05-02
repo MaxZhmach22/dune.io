@@ -14,7 +14,7 @@ public class BuildScript
         buildPlayerOptions.locationPathName = "Builds/dune_io";
         buildPlayerOptions.options = BuildOptions.None;
 
-        PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
+        PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Brotli;
         
         var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
         var summary = report.summary;
