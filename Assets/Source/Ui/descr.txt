@@ -1,0 +1,7 @@
+Building kit for medieval GUIs. There are 34 ready-to-use GUI elements already defined for CEGUI.
+This GUI has originally been drawn by moOshiE for the game "Arkana-FTS".
+The CEGUI configuration files have been written by Pompei2 for the game "Arkana-FTS".
+
+If you use this, please give credits and a link to the Arkana-FTS project (http://arkana-fts.org)
+
+Licensed under CC-BY-SA
